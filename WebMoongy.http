@@ -1,0 +1,6 @@
+@WebMoongy_HostAddress = http://localhost:5020
+
+GET {{WebMoongy_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
