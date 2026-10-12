@@ -1,0 +1,36 @@
+name: SonarCloud analysis
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  build-and-analyze:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET 10
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Install SonarScanner (.NET)
+        run: |
+          dotnet tool install --global dotnet-sonarscanner
+          echo "$HOME/.dotnet/tools" >> $GITHUB_PATH
+
+      - name: Restore & Build
+        run: |
+          dotnet restore
+          dotnet build --configuration Release
+
+      - name: Run SonarCloud analysis
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          dotnet sonarscanner begin /k:"beaexpertlda-key" /o:"beaexpertlda-key" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.login="556b59d827864a22205a6aa06d6251976daad6d6"
+          dotnet build --configuration Release
+          dotnet sonarscanner end /d:sonar.login="556b59d827864a22205a6aa06d6251976daad6d6"
